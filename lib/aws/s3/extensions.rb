@@ -204,6 +204,7 @@ end
 class Class # :nodoc:
   def cattr_reader(*syms)
     syms.flatten.each do |sym|
+      next if sym.to_s.include? "{"
       class_eval(<<-EOS, __FILE__, __LINE__)
         unless defined? @@#{sym}
           @@#{sym} = nil
@@ -222,7 +223,7 @@ class Class # :nodoc:
 
   def cattr_writer(*syms)
     syms.flatten.each do |sym|
-      begin
+      next if sym.to_s.include? "{"
       class_eval(<<-EOS, __FILE__, __LINE__)
         unless defined? @@#{sym}
           @@#{sym} = nil
@@ -236,9 +237,6 @@ class Class # :nodoc:
           @@#{sym} = obj
         end
       EOS
-      rescue Exception => e
-        puts "Failed on #{e}."
-      end
     end
   end
 
